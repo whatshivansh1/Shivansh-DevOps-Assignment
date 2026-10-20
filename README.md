@@ -20,8 +20,3 @@ documentation, and supporting screenshots for ten DevOps exercises.
 
 See [VIVA-QUESTIONS.md](VIVA-QUESTIONS.md) for the consolidated viva preparation questions.
 
-## Exercise 6: Monitoring and Alerting
-
-Exercise 6 uses Python, Prometheus, Grafana, Docker Compose, and a Jenkins pipeline for delivery operations monitoring.
-
-See [Exercise 6 README](exercise6/README.md) for setup instructions, configuration, verification, and screenshots.
