@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Environment secrets
+.env
+.env.*
+
+# Allow example environment templates
+!.env.example
+
+# Logs
+*.log

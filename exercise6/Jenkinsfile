@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Pre-check') {
+            steps {
+                sh 'python3 --version'
+                sh 'docker --version'
+                sh 'docker compose version'
+            }
+        }
+
+        stage('Validate Configuration') {
+            steps {
+                sh 'python3 -m py_compile delivery_metrics.py'
+                sh 'python3 -m json.tool grafana-provisioning/dashboards/delivery-dashboard.json > /dev/null'
+                sh 'docker compose config --quiet'
+            }
+        }
+
+        stage('Build Delivery Metrics Image') {
+            steps {
+                sh 'docker build -t zapptto-delivery-metrics .'
+            }
+        }
+
+        stage('Deploy Monitoring Stack') {
+            steps {
+                sh 'docker compose up -d'
+            }
+        }
+
+        stage('Verify Metrics Endpoint') {
+            steps {
+                sh '''
+                    for i in $(seq 1 20); do
+                      if curl -fsS http://localhost:8000/metrics | grep -q "pending_deliveries"; then
+                        echo "Delivery metrics endpoint is responding."
+                        exit 0
+                      fi
+                      sleep 3
+                    done
+                    echo "Metrics endpoint did not become ready."
+                    exit 1
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Delivery monitoring pipeline finished. Review stage results above.'
+        }
+    }
+}
